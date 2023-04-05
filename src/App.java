@@ -2,6 +2,7 @@
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.StringTokenizer;
 
 public class App {
 
@@ -15,6 +16,7 @@ public class App {
         boolean banderita = false;
         String mensaje = "";
         boolean bandera = false;
+        boolean salir = false;
         BigInteger numerop = BigInteger.ZERO, numeroq = BigInteger.ZERO;
 
         System.out.println("------CIFRADO RSA------");    
@@ -54,36 +56,53 @@ public class App {
         System.out.println("Clave pública: (" + publica.n + ", " + publica.k + ")");
         System.out.println("Clave privada: (" + privada.n + ", " + privada.k + ")");
         
-        
-        System.out.println("\n¿Qué desea hacer? ");   
-        System.out.println("1.Cifrar\n2.Descifrar");
-        int op = 0;
-        
-        while(banderita == false){
-            op = leer.nextInt();
+        do{
+            System.out.println("\n¿Qué desea hacer? ");   
+            System.out.println("1.Cifrar\n2.Descifrar\n3.Salir");
+            int op = 0; 
 
-            if(op == 1 || op == 2){
-                banderita = true;
-            }else{
-                System.out.println("Opcion incorrecta.");    
-            }
-        }
+            switch(op){
+                case 1:
+                    System.out.println("Ingrese el mensaje a cifrar: ");
+                    mensaje = leer.nextLine();
+                    mensaje = leer.nextLine();
 
-       if(op == 1){
+                    BigInteger[] textoSalida = cifrar(mensaje, publica);
+                
+                    System.out.println("\nMensaje cifrado: ");
 
-        System.out.println("Ingrese el mensaje a cifrar (solo numeros): ");
-        mensaje = leer.nextLine();
-        mensaje = leer.nextLine();
-    
-        System.out.println("Mensaje cifrado: " + cifrar(mensaje, publica));
-        
-       }else if(op == 2){  
-        System.out.println("Ingrese el mensaje a descifrar (solo numeros): ");
-        mensaje = leer.nextLine();
-        mensaje = leer.nextLine();
+                    for(int i = 0; i < textoSalida.length; i++){
+                        System.out.print(textoSalida[i].toString() + " ");
+                    }
+                    break;
 
-        System.out.println("Mensaje descifrado: " + descifrar(mensaje, privada));
-       }
+                case 2:
+                    System.out.println("Ingrese el mensaje a descifrar: ");
+                    mensaje = leer.nextLine();
+                    mensaje = leer.nextLine();
+            
+                    String letra = "";
+                    StringTokenizer string = new StringTokenizer(mensaje);
+                    BigInteger[] textoCifrado = new BigInteger[string.countTokens()];
+            
+                    for (int i = 0; i < textoCifrado.length; i++) {
+                        letra = string.nextToken();
+                        textoCifrado[i] = new BigInteger(letra);
+                    }
+            
+                    System.out.println("\nMensaje descifrado: " + descifrar(textoCifrado, privada));
+                    break;
+
+                case 3:
+                    salir = true;
+                    break;
+
+                default:
+                    System.out.println("Opcion incorrecta.");
+                    }
+
+        }while(!salir);
+ 
     }
 
     public static clave clavePublica(BigInteger numeroP, BigInteger numeroQ){
@@ -132,10 +151,24 @@ public class App {
         return cPublica;
     }
 
-    public static BigInteger cifrar(String mensaje, clave clavePublica){
+    public static BigInteger[] cifrar(String mensaje, clave clavePublica){
 
-        BigInteger msj = new BigInteger(mensaje);
-        BigInteger cifrado = msj.modPow(clavePublica.k, clavePublica.n);
+        int i;
+        byte[] temp = new byte[1];
+        byte[] elementos = mensaje.getBytes();
+        BigInteger[] msj = new BigInteger[elementos.length];
+        
+        //recorrer el tamaño de los bigdigitos
+        for(i = 0; i < msj.length; i++){
+            temp[0] = elementos[i];
+            msj[i] = new BigInteger(temp);
+        }
+
+        BigInteger[] cifrado = new BigInteger[msj.length];
+
+        for(i = 0; i < msj.length; i++){
+            cifrado[i] = msj[i].modPow(clavePublica.k, clavePublica.n);
+        }
 
         return cifrado;
     }
@@ -148,14 +181,22 @@ public class App {
         return cPrivada;
     }
 
-    public static BigInteger descifrar(String mensaje, clave clavePrivada){
+    public static String descifrar(BigInteger[] cifrado, clave clavePrivada){
 
-        BigInteger msj = new BigInteger(mensaje);
-        BigInteger cifrado = msj.modPow(clavePrivada.k, clavePrivada.n);
+        BigInteger[] descifrado = new BigInteger[cifrado.length];
 
-        return cifrado;
+        for(int i = 0; i < cifrado.length; i++){
+            descifrado[i] = cifrado[i].modPow(clavePrivada.k, clavePrivada.n);
+        }
+
+        char[] charArray = new char[descifrado.length];
+
+        for(int i = 0; i < charArray.length; i++){
+            charArray[i] = (char) descifrado[i].intValue();
+        }
+
+        return (new String(charArray));
     }
-
 
 //Recursos
     public static boolean esPrimo(BigInteger numero) {

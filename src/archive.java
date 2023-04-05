@@ -1,3 +1,5 @@
+import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class archive {
@@ -124,7 +126,7 @@ public class archive {
         return cPublica;
     }
 
-    public static long cifrar(long mensaje, clave clavePublica){
+    /*public static long cifrar(long mensaje, clave clavePublica){
         long cifrado = 0; 
         return cifrado = ((long) Math.pow(mensaje, clavePublica.k)) % clavePublica.n;
     }
@@ -136,12 +138,19 @@ public class archive {
 
         return cPrivada;
     }
-
+*/
     public static long descifrar(long mensaje, clave clavePrivada){
         long descifrado;
         return descifrado = (long) ((Math.pow(mensaje, clavePrivada.k)) % clavePrivada.n);
     }
+¨
+public static BigInteger cifrar(String mensaje, clave clavePublica){
 
+    BigInteger msj = new BigInteger(mensaje);
+    BigInteger cifrado = msj.modPow(clavePublica.k, clavePublica.n);
+
+    return cifrado;
+}
 
 //Recursos
     public static boolean esPrimo(int numero) {
