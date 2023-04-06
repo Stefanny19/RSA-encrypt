@@ -14,6 +14,7 @@ public class App {
 
         Scanner leer = new Scanner(System.in);
         boolean banderita = false;
+        int op = 0; 
         String mensaje = "";
         boolean bandera = false;
         boolean salir = false;
@@ -59,7 +60,7 @@ public class App {
         do{
             System.out.println("\n¿Qué desea hacer? ");   
             System.out.println("1.Cifrar\n2.Descifrar\n3.Salir");
-            int op = 0; 
+            op = leer.nextInt();
 
             switch(op){
                 case 1:
@@ -74,6 +75,8 @@ public class App {
                     for(int i = 0; i < textoSalida.length; i++){
                         System.out.print(textoSalida[i].toString() + " ");
                     }
+                    System.out.println();
+                    
                     break;
 
                 case 2:
